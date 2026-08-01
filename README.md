@@ -51,7 +51,7 @@ covid19-socioeconomic-analysis/
 │   └── hospital_medicine.csv
 ├── notebooks/
 │   ├── 01_data_ingestion.py
-│   └── 02_data_preprocessing.ipynb
+│   └── 02_data_preprocessing.py
 ├── scripts/
 │   └── __init__.py
 └── README.md
@@ -72,11 +72,11 @@ It creates Spark DataFrames for:
 - Health-center density
 - Essential-medicine availability
 
-#### `02_data_preprocessing.ipynb`
+#### `02_data_preprocessing.py`
 
-Reserved for preprocessing and dataset integration.
+Begins by running `01_data_ingestion.py` in the notebook context, then imports Spark helpers for preprocessing work.
 
-This notebook is currently empty.
+This notebook currently does not implement any real preprocessing logic yet.
 
 ## Data Sources
 
@@ -241,7 +241,7 @@ Although copies of these files are committed under `data/`, the notebook does no
 Run the notebooks in this order:
 
 1. `notebooks/01_data_ingestion.py`
-2. `notebooks/02_data_preprocessing.ipynb`
+2. `notebooks/02_data_preprocessing.py`
 
 The preprocessing notebook is currently empty, so only ingestion work is performed at this stage.
 
@@ -366,7 +366,7 @@ Future development should consider:
 
 ## Current Development Priorities
 
-1. Implement `02_data_preprocessing.ipynb`.
+1. Implement `02_data_preprocessing.py`.
 2. Standardize country identifiers.
 3. Define the COVID-19 mortality outcome and analysis period.
 4. Reshape and filter the World Bank GDP data.
