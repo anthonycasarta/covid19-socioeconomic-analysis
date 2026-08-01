@@ -1,5 +1,5 @@
 # Databricks notebook source
-# MAGIC %run ./01_data_ingestion.py
+# MAGIC %run ./01_data_ingestion
 
 # COMMAND ---------- 
 
