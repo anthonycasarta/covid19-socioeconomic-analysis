@@ -50,7 +50,7 @@ covid19-socioeconomic-analysis/
 │   ├── hospital_density.csv
 │   └── hospital_medicine.csv
 ├── notebooks/
-│   ├── 01_data_ingestion.ipynb
+│   ├── 01_data_ingestion.py
 │   └── 02_data_preprocessing.ipynb
 ├── scripts/
 │   └── __init__.py
@@ -59,7 +59,7 @@ covid19-socioeconomic-analysis/
 
 ### Notebooks
 
-#### `01_data_ingestion.ipynb`
+#### `01_data_ingestion.py`
 
 Implements the current data-ingestion workflow.
 
@@ -240,7 +240,7 @@ Although copies of these files are committed under `data/`, the notebook does no
 
 Run the notebooks in this order:
 
-1. `notebooks/01_data_ingestion.ipynb`
+1. `notebooks/01_data_ingestion.py`
 2. `notebooks/02_data_preprocessing.ipynb`
 
 The preprocessing notebook is currently empty, so only ingestion work is performed at this stage.
