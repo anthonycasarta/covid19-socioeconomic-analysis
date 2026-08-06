@@ -28,14 +28,22 @@ import requests
 
 # COMMAND ----------
 
-healthcare_data_raw = "/Volumes/covid19_socioeconomic_analysis/healthcare/raw"
+# MAGIC %md
+# MAGIC Move healthcare data from project files to the raw volume
 
 # COMMAND ----------
 
-health_centers_density_df = spark.read.csv(healthcare_data_path + "health_centers_density.csv", header=True, inferSchema=True)
-hospital_beds_density_df = spark.read.csv(healthcare_data_path + "hospital_beds.csv", header=True, inferSchema=True)
-hospital_density_df = spark.read.csv(healthcare_data_path + "hospital_density.csv", header=True, inferSchema=True)
-hospital_medicine_df = spark.read.csv(healthcare_data_path + "hospital_medicine.csv", header=True, inferSchema=True)
+healthcare_data_raw_dir = "/Volumes/covid19_socioeconomic_analysis/healthcare/raw"
+
+# COMMAND ----------
+
+user = spark.sql("SELECT current_user()").first()[0]
+source__dir = "/Workspace/Users/{user}/covid19-socioeconomic-analysis/data"
+target_dir = healthcare_data_raw_dir
+
+for f in dbutils.fs.ls(source_dir):
+    if f.path.endswith(".csv"):
+        dbutils.fs.cp(f.path, target_dir + f.name)
 
 # COMMAND ----------
 
