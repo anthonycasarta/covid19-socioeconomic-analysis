@@ -1,5 +1,8 @@
 # Databricks notebook source
-
+# /// script
+# [tool.databricks.environment]
+# environment_version = "5"
+# ///
 import io
 import zipfile
 
@@ -16,7 +19,7 @@ import requests
 # MAGIC %sql
 # MAGIC -- Create covid19_socioeconomic_analysis Unity Catalog
 # MAGIC CREATE CATALOG covid19_socioeconomic_analysis;
-# MAGIC 
+# MAGIC
 # MAGIC -- Create healthcare schema
 # MAGIC CREATE SCHEMA covid19_socioeconomic_analysis.healthcare;
 # MAGIC
@@ -25,7 +28,7 @@ import requests
 
 # COMMAND ----------
 
-healthcare_data_path = "dbfs:/Volumes/covid19_socioeconomic_analysis/default/tmp_healthcare_data/"
+healthcare_data_raw = "/Volumes/covid19_socioeconomic_analysis/healthcare/raw"
 
 # COMMAND ----------
 
