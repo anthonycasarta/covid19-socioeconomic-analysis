@@ -47,6 +47,20 @@ for f in dbutils.fs.ls(source_dir):
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC #Create schemas and volumes for Covid-19 and GDP data
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC -- Create covid_19 schema
+# MAGIC CREATE SCHEMA covid19_socioeconomic_analysis.covid_19;
+# MAGIC
+# MAGIC -- Create raw volume for covid_19 schema
+# MAGIC CREATE VOLUME covid19_socioeconomic_analysis.covid_19.raw
+
+# COMMAND ----------
+
 covid_csv_url = "https://catalog.ourworldindata.org/garden/covid/latest/compact/compact.csv"
 gdp_csv_url = "https://api.worldbank.org/v2/en/indicator/NY.GDP.PCAP.CD?downloadformat=csv"
 
