@@ -38,7 +38,7 @@ healthcare_data_raw_dir = "/Volumes/covid19_socioeconomic_analysis/healthcare/ra
 # COMMAND ----------
 
 user = spark.sql("SELECT current_user()").first()[0]
-source__dir = "/Workspace/Users/{user}/covid19-socioeconomic-analysis/data"
+source_dir = "/Workspace/Users/{user}/covid19-socioeconomic-analysis/data"
 target_dir = healthcare_data_raw_dir
 
 for f in dbutils.fs.ls(source_dir):
