@@ -6,6 +6,8 @@ import zipfile
 import pandas as pd
 import requests
 
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC Create catalog for project and schema and volume for healthcare data
 
@@ -16,10 +18,10 @@ import requests
 # MAGIC CREATE CATALOG covid19_socioeconomic_analysis;
 # MAGIC 
 # MAGIC -- Create healthcare schema
-# MAGIC CREATE SCHEMA covid19_socioeconomic_analysis.healthcare
+# MAGIC CREATE SCHEMA covid19_socioeconomic_analysis.healthcare;
 # MAGIC
 # MAGIC -- Create raw volume for healthcare schema
-# MAGIC CREATE VOLUME covid19_socioeconomic_analysis.healthcare.raw
+# MAGIC CREATE VOLUME covid19_socioeconomic_analysis.healthcare.raw;
 
 # COMMAND ----------
 
