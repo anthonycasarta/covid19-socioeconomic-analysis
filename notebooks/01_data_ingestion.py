@@ -6,6 +6,16 @@ import zipfile
 import pandas as pd
 import requests
 
+# MAGIC %sql
+# MAGIC -- Create covid19_socioeconomic_analysis Unity Catalog
+# MAGIC CREATE CATALOG covid19_socioeconomic_analysis;
+# MAGIC 
+# MAGIC -- Create healthcare schema
+# MAGIC CREATE SCHEMA covid19_socioeconomic_analysis.healthcare
+# MAGIC
+# MAGIC -- Create raw volume for healthcare schema
+# MAGIC CREATE VOLUME covid19_socioeconomic_analysis.healthcare.raw
+
 # COMMAND ----------
 
 healthcare_data_path = "dbfs:/Volumes/covid19_socioeconomic_analysis/default/tmp_healthcare_data/"
