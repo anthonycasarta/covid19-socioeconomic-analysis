@@ -6,6 +6,9 @@ import zipfile
 import pandas as pd
 import requests
 
+# MAGIC %md
+# MAGIC Create catalog for project and schema and volume for healthcare data
+
 # MAGIC %sql
 # MAGIC -- Create covid19_socioeconomic_analysis Unity Catalog
 # MAGIC CREATE CATALOG covid19_socioeconomic_analysis;
