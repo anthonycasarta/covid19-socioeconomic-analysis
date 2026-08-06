@@ -12,24 +12,24 @@ import requests
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Create catalog for project and schema and volume for healthcare data
+# MAGIC ##Create catalog for project and schema and volume for healthcare data
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC -- Create covid19_socioeconomic_analysis Unity Catalog
-# MAGIC CREATE CATALOG covid19_socioeconomic_analysis;
+# MAGIC CREATE CATALOG IF NOT EXISTS covid19_socioeconomic_analysis;
 # MAGIC
 # MAGIC -- Create healthcare schema
-# MAGIC CREATE SCHEMA covid19_socioeconomic_analysis.healthcare;
+# MAGIC CREATE SCHEMA IF NOT EXISTS covid19_socioeconomic_analysis.healthcare;
 # MAGIC
 # MAGIC -- Create raw volume for healthcare schema
-# MAGIC CREATE VOLUME covid19_socioeconomic_analysis.healthcare.raw;
+# MAGIC CREATE VOLUME IF NOT EXISTS covid19_socioeconomic_analysis.healthcare.raw;
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Move healthcare data from project files to the raw volume
+# MAGIC ##Move healthcare data from project files to the raw volume
 
 # COMMAND ----------
 
@@ -48,16 +48,25 @@ for f in dbutils.fs.ls(source_dir):
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Create schemas and volumes for Covid-19 and GDP data
+# MAGIC ##Create schemas and volumes for Covid-19 and GDP data
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC -- Create covid_19 schema
-# MAGIC CREATE SCHEMA covid19_socioeconomic_analysis.covid_19;
+# MAGIC CREATE SCHEMA IF NOT EXISTS covid19_socioeconomic_analysis.covid_19;
 # MAGIC
 # MAGIC -- Create raw volume for covid_19 schema
-# MAGIC CREATE VOLUME covid19_socioeconomic_analysis.covid_19.raw
+# MAGIC CREATE VOLUME IF NOT EXISTS covid19_socioeconomic_analysis.covid_19.raw;
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC -- Create gdp schema
+# MAGIC CREATE SCHEMA IF NOT EXISTS covid19_socioeconomic_analysis.gdp;
+# MAGIC
+# MAGIC -- Create raw volume for gdp schema
+# MAGIC CREATE VOLUME IF NOT EXISTS covid19_socioeconomic_analysis.gdp.raw;
 
 # COMMAND ----------
 
