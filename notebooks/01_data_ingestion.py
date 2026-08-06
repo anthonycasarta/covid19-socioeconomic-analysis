@@ -70,19 +70,32 @@ for f in dbutils.fs.ls(source_dir):
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ##Download Covid-19 and GDP data into raw volumes
+
+# COMMAND ----------
+
 covid_csv_url = "https://catalog.ourworldindata.org/garden/covid/latest/compact/compact.csv"
 gdp_csv_url = "https://api.worldbank.org/v2/en/indicator/NY.GDP.PCAP.CD?downloadformat=csv"
 
-covid_pdf = pd.read_csv(covid_csv_url)
-response = requests.get(gdp_csv_url)
-response.raise_for_status()
+# COMMAND ----------
 
-with zipfile.ZipFile(io.BytesIO(response.content)) as z:
-    print(z.namelist())
+covid_data_raw_dir = "/Volumes/covid19_socioeconomic_analysis/covid_19/raw/"
+gdp_data_raw_dir = "/Volumes/covid19_socioeconomic_analysis/gdp/raw/"
 
-    csv_filename = z.namelist()[1]
+# COMMAND ----------
 
-    gdp_pdf = pd.read_csv(z.open(csv_filename), skiprows=4)
+# COVID CSV
+r = requests.get(covid_csv_url, timeout=60)
+r.raise_for_status()
+with open(covid_data_raw_dir + "covid_19.csv", "wb") as f:
+    f.write(r.content)
+
+# GDP ZIP
+r = requests.get(gdp_csv_url, timeout=60)
+r.raise_for_status()
+with zipfile.ZipFile(io.BytesIO(r.content)) as z:
+    z.extractall(gdp_data_raw_dir)
 
 # COMMAND ----------
 
