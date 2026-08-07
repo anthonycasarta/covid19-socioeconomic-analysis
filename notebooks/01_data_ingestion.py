@@ -95,14 +95,13 @@ with open(covid_data_raw_dir + "owid_covid_19_compact.csv", "wb") as f:
 r = requests.get(gdp_csv_url, timeout=60)
 r.raise_for_status()
 with zipfile.ZipFile(io.BytesIO(r.content)) as z:
-    csv_name = next(
-        name for name in z.namelist()
-        if name.endswith(".csv") and not name.split("/")[-1].startswith("Metadata_")
-    )
-    with z.open(csv_name) as src, open(gdp_data_raw_dir + "world_bank_gdp_per_capita.csv", "wb") as dst:
-        dst.write(src.read())
+    for name in z.namelist():
+        base = name.split("/")[-1]
 
-# COMMAND ----------
+        if base.startswith("Metadata_") or not base.endswith(".csv"):
+            with z.open(name) as src, open(gdp_data_raw_dir + base, "wb") as dst:
+                dst.write(src.read())
+            continue
 
-covid_df = spark.createDataFrame(covid_pdf)
-gdp_df = spark.createDataFrame(gdp_pdf)
+        with z.open(name) as src, open(gdp_data_raw_dir + "world_bank_gdp_per_capita.csv", "wb") as dst:
+            dst.write(src.read())
