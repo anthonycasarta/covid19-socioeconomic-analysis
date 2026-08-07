@@ -12,7 +12,7 @@ import requests
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Create catalog for project and schema and volume for healthcare data
+# MAGIC ##Create Structure for Project Data
 
 # COMMAND ----------
 
@@ -20,11 +20,13 @@ import requests
 # MAGIC -- Create covid19_socioeconomic_analysis Unity Catalog
 # MAGIC CREATE CATALOG IF NOT EXISTS covid19_socioeconomic_analysis;
 # MAGIC
-# MAGIC -- Create healthcare schema
-# MAGIC CREATE SCHEMA IF NOT EXISTS covid19_socioeconomic_analysis.healthcare;
+# MAGIC -- Create bronze schema
+# MAGIC CREATE SCHEMA IF NOT EXISTS covid19_socioeconomic_analysis.bronze;
 # MAGIC
-# MAGIC -- Create raw volume for healthcare schema
-# MAGIC CREATE VOLUME IF NOT EXISTS covid19_socioeconomic_analysis.healthcare.raw;
+# MAGIC -- Create raw volumes for bronze schema
+# MAGIC CREATE VOLUME IF NOT EXISTS covid19_socioeconomic_analysis.bronze.healthcare_raw;
+# MAGIC CREATE VOLUME IF NOT EXISTS covid19_socioeconomic_analysis.bronze.covid_raw;
+# MAGIC CREATE VOLUME IF NOT EXISTS covid19_socioeconomic_analysis.bronze.gdp_raw;
 
 # COMMAND ----------
 
@@ -33,40 +35,20 @@ import requests
 
 # COMMAND ----------
 
-healthcare_data_raw_dir = "/Volumes/covid19_socioeconomic_analysis/healthcare/raw/"
+healthcare_data_raw_dir = "/Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/"
 
 # COMMAND ----------
 
 user = spark.sql("SELECT current_user()").first()[0]
 source_dir = f"/Workspace/Users/{user}/covid19-socioeconomic-analysis/data/"
-target_dir = healthcare_data_raw_dir
+base_dir = f"{healthcare_data_raw_dir}source_a/data/"
+
+target_dir = base_dir
+dbutils.fs.mkdirs(base_dir)
 
 for f in dbutils.fs.ls(source_dir):
     if f.path.endswith(".csv"):
         dbutils.fs.cp(f.path, target_dir + f.name)
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ##Create schemas and volumes for Covid-19 and GDP data
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC -- Create covid_19 schema
-# MAGIC CREATE SCHEMA IF NOT EXISTS covid19_socioeconomic_analysis.covid_19;
-# MAGIC
-# MAGIC -- Create raw volume for covid_19 schema
-# MAGIC CREATE VOLUME IF NOT EXISTS covid19_socioeconomic_analysis.covid_19.raw;
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC -- Create gdp schema
-# MAGIC CREATE SCHEMA IF NOT EXISTS covid19_socioeconomic_analysis.gdp;
-# MAGIC
-# MAGIC -- Create raw volume for gdp schema
-# MAGIC CREATE VOLUME IF NOT EXISTS covid19_socioeconomic_analysis.gdp.raw;
 
 # COMMAND ----------
 
@@ -80,18 +62,24 @@ gdp_csv_url = "https://api.worldbank.org/v2/en/indicator/NY.GDP.PCAP.CD?download
 
 # COMMAND ----------
 
-covid_data_raw_dir = "/Volumes/covid19_socioeconomic_analysis/covid_19/raw/"
-gdp_data_raw_dir = "/Volumes/covid19_socioeconomic_analysis/gdp/raw/"
+owid_covid_data_raw_dir = "/Volumes/covid19_socioeconomic_analysis/bronze/covid_raw/owid/data/"
+world_bank_gdp_data_raw_dir = "/Volumes/covid19_socioeconomic_analysis/bronze/gdp_raw/world_bank/data/"
+world_bank_gdp_metadata_raw_dir = "/Volumes/covid19_socioeconomic_analysis/bronze/gdp_raw/world_bank/metadata/"
 
 # COMMAND ----------
 
 # COVID CSV
+dbutils.fs.mkdirs(owid_covid_data_raw_dir)
+
 r = requests.get(covid_csv_url, timeout=60)
 r.raise_for_status()
-with open(covid_data_raw_dir + "owid_covid_19_compact.csv", "wb") as f:
+with open(owid_covid_data_raw_dir + "owid_covid_19_compact.csv", "wb") as f:
     f.write(r.content)
 
 # GDP ZIP
+dbutils.fs.mkdirs(world_bank_gdp_data_raw_dir)
+dbutils.fs.mkdirs(world_bank_gdp_metadata_raw_dir)
+
 r = requests.get(gdp_csv_url, timeout=60)
 r.raise_for_status()
 with zipfile.ZipFile(io.BytesIO(r.content)) as z:
@@ -99,9 +87,20 @@ with zipfile.ZipFile(io.BytesIO(r.content)) as z:
         base = name.split("/")[-1]
 
         if base.startswith("Metadata_") or not base.endswith(".csv"):
-            with z.open(name) as src, open(gdp_data_raw_dir + base, "wb") as dst:
+            with z.open(name) as src, open(world_bank_gdp_metadata_raw_dir + base, "wb") as dst:
                 dst.write(src.read())
             continue
 
-        with z.open(name) as src, open(gdp_data_raw_dir + "world_bank_gdp_per_capita.csv", "wb") as dst:
+        with z.open(name) as src, open(world_bank_gdp_data_raw_dir + "world_bank_gdp_per_capita.csv", "wb") as dst:
             dst.write(src.read())
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ##Ingest into Delta Tables
+
+# COMMAND ----------
+
+# MAGIC %sql
+# -- Healthcare
+
