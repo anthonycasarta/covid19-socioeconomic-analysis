@@ -102,5 +102,54 @@ with zipfile.ZipFile(io.BytesIO(r.content)) as z:
 # COMMAND ----------
 
 # MAGIC %sql
-# -- Healthcare
+# MAGIC -- Health Centers Density
+# MAGIC CREATE OR REFRESH STREAMING TABLE IF NOT EXISTS 
+# MAGIC covid19_socioeconomic_analysis.bronze.health_centers_density_raw
+# MAGIC AS SELECT *
+# MAGIC FROM STREAM read_files()
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC -- Hospital Beds
+# MAGIC CREATE OR REFRESH STREAMING TABLE IF NOT EXISTS 
+# MAGIC covid19_socioeconomic_analysis.bronze.hospital_beds_raw
+# MAGIC AS SELECT *
+# MAGIC FROM STREAM read_files()
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC -- Hospital Density
+# MAGIC CREATE OR REFRESH STREAMING TABLE IF NOT EXISTS 
+# MAGIC covid19_socioeconomic_analysis.bronze.hospital_density_raw
+# MAGIC AS SELECT *
+# MAGIC FROM STREAM read_files()
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC -- Hospital Medicine
+# MAGIC CREATE OR REFRESH STREAMING TABLE IF NOT EXISTS 
+# MAGIC covid19_socioeconomic_analysis.bronze.hospital_medicine_raw
+# MAGIC AS SELECT *
+# MAGIC FROM STREAM read_files()
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC -- COVID
+# MAGIC CREATE OR REFRESH STREAMING TABLE IF NOT EXISTS
+# MAGIC covid19_socioeconomic_analysis.bronze.covid_owid_raw
+# MAGIC AS SELECT *
+# MAGIC FROM STREAM read_files()
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC -- GDP
+# MAGIC CREATE OR REFRESH STREAMING TABLE IF NOT EXISTS
+# MAGIC covid19_socioeconomic_analysis.bronze.gdp_world_bank_raw
+# MAGIC AS SELECT *
+# MAGIC FROM STREAM read_files()
 
