@@ -88,14 +88,19 @@ gdp_data_raw_dir = "/Volumes/covid19_socioeconomic_analysis/gdp/raw/"
 # COVID CSV
 r = requests.get(covid_csv_url, timeout=60)
 r.raise_for_status()
-with open(covid_data_raw_dir + "covid_19.csv", "wb") as f:
+with open(covid_data_raw_dir + "owid_covid_19_compact.csv", "wb") as f:
     f.write(r.content)
 
 # GDP ZIP
 r = requests.get(gdp_csv_url, timeout=60)
 r.raise_for_status()
 with zipfile.ZipFile(io.BytesIO(r.content)) as z:
-    z.extractall(gdp_data_raw_dir)
+    csv_name = next(
+        name for name in z.namelist()
+        if name.endswith(".csv") and not name.split("/")[-1].startswith("Metadata_")
+    )
+    with z.open(csv_name) as src, open(gdp_data_raw_dir + "world_bank_gdp_per_capita.csv", "wb") as dst:
+        dst.write(src.read())
 
 # COMMAND ----------
 
