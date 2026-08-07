@@ -3,7 +3,11 @@
 
 # COMMAND ---------- 
 
-from pyspark.sql.functions import to_date, col, year, avg, max
-from pyspark.ml.feature import Imputer
+# MAGIC %md
+# MAGIC #Review Covid data
 
+# COMMAND ----------
 
+# MAGIC %sql
+# MAGIC SELECT COUNT(*) AS record_count
+# MAGIC FROM covid19_socioeconomic_analysis.bronze.covid_owid_raw;
