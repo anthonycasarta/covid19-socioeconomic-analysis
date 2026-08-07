@@ -41,14 +41,14 @@ healthcare_data_raw_dir = "/Volumes/covid19_socioeconomic_analysis/bronze/health
 
 user = spark.sql("SELECT current_user()").first()[0]
 source_dir = f"/Workspace/Users/{user}/covid19-socioeconomic-analysis/data/"
-base_dir = f"{healthcare_data_raw_dir}source_a/data/"
+base_dir = f"{healthcare_data_raw_dir}source_a/"
 
 target_dir = base_dir
 dbutils.fs.mkdirs(base_dir)
 
 for f in dbutils.fs.ls(source_dir):
     if f.path.endswith(".csv"):
-        dbutils.fs.cp(f.path, target_dir + f.name)
+        dbutils.fs.cp(f.path, f"{target_dir}/{f.name.removesuffix('.csv')}/data/" + f.name)
 
 # COMMAND ----------
 
@@ -103,53 +103,78 @@ with zipfile.ZipFile(io.BytesIO(r.content)) as z:
 
 # MAGIC %sql
 # MAGIC -- Health Centers Density
-# MAGIC CREATE OR REFRESH STREAMING TABLE IF NOT EXISTS 
+# MAGIC CREATE OR REFRESH STREAMING TABLE 
 # MAGIC covid19_socioeconomic_analysis.bronze.health_centers_density_raw
+# MAGIC TBLPROPERTIES ('delta.columnMapping.mode' = 'name')
 # MAGIC AS SELECT *
-# MAGIC FROM STREAM read_files()
+# MAGIC FROM STREAM read_files(
+# MAGIC     "/Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/source_a/health_centers_density/data/",
+# MAGIC     format => "csv",
+# MAGIC     header => true
+# MAGIC     )
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC -- Hospital Beds
-# MAGIC CREATE OR REFRESH STREAMING TABLE IF NOT EXISTS 
+# MAGIC CREATE OR REFRESH STREAMING TABLE 
 # MAGIC covid19_socioeconomic_analysis.bronze.hospital_beds_raw
+# MAGIC TBLPROPERTIES ('delta.columnMapping.mode' = 'name')
 # MAGIC AS SELECT *
-# MAGIC FROM STREAM read_files()
+# MAGIC FROM STREAM read_files(
+# MAGIC     "/Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/source_a/hospital_beds/data/",
+# MAGIC     format => 'csv',
+# MAGIC     header => true
+# MAGIC     )
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC -- Hospital Density
-# MAGIC CREATE OR REFRESH STREAMING TABLE IF NOT EXISTS 
+# MAGIC CREATE OR REFRESH STREAMING TABLE 
 # MAGIC covid19_socioeconomic_analysis.bronze.hospital_density_raw
+# MAGIC TBLPROPERTIES ('delta.columnMapping.mode' = 'name')
 # MAGIC AS SELECT *
-# MAGIC FROM STREAM read_files()
+# MAGIC FROM STREAM read_files(
+# MAGIC     "/Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/source_a/hospital_density/data/",
+# MAGIC     format => 'csv',
+# MAGIC     header => true
+# MAGIC     )
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC -- Hospital Medicine
-# MAGIC CREATE OR REFRESH STREAMING TABLE IF NOT EXISTS 
+# MAGIC CREATE OR REFRESH STREAMING TABLE 
 # MAGIC covid19_socioeconomic_analysis.bronze.hospital_medicine_raw
+# MAGIC TBLPROPERTIES ('delta.columnMapping.mode' = 'name')
 # MAGIC AS SELECT *
-# MAGIC FROM STREAM read_files()
+# MAGIC FROM STREAM read_files(
+# MAGIC     "/Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/source_a/hospital_medicine/data/",
+# MAGIC     format => 'csv',
+# MAGIC     header => true
+# MAGIC     )
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC -- COVID
-# MAGIC CREATE OR REFRESH STREAMING TABLE IF NOT EXISTS
+# MAGIC CREATE OR REFRESH STREAMING TABLE
 # MAGIC covid19_socioeconomic_analysis.bronze.covid_owid_raw
 # MAGIC AS SELECT *
-# MAGIC FROM STREAM read_files()
+# MAGIC FROM STREAM read_files(
+# MAGIC     "/Volumes/covid19_socioeconomic_analysis/bronze/covid_raw/owid/data/",
+# MAGIC     format => "csv",
+# MAGIC     header => true,
+# MAGIC     )
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC -- GDP
-# MAGIC CREATE OR REFRESH STREAMING TABLE IF NOT EXISTS
+# MAGIC CREATE OR REFRESH STREAMING TABLE
 # MAGIC covid19_socioeconomic_analysis.bronze.gdp_world_bank_raw
+# MAGIC TBLPROPERTIES ('delta.columnMapping.mode' = 'name')
 # MAGIC AS SELECT *
-# MAGIC FROM STREAM read_files()
-
+# MAGIC FROM STREAM read_files("/Volumes/covid19_socioeconomic_analysis/bronze/gdp_raw/world_bank/data/")
+# MAGIC
