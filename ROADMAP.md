@@ -1,6 +1,12 @@
 # Roadmap
 
-This file records the next likely project directions after the current ingestion prototype.
+This file records the next likely project directions after the current ingestion and COVID Silver prototype.
+
+## Completed
+
+- Bronze ingestion now writes streaming tables for the source datasets.
+- COVID-19 profiling and null-rate analysis are implemented.
+- `silver.covid_daily` exists as a cleaned COVID-19 streaming table.
 
 ## Decision Summary
 
@@ -10,16 +16,16 @@ This file records the next likely project directions after the current ingestion
 
 ## Structured DB Pulls
 
-This is the best near-term fit for the project.
+This is the best near-term fit for the remaining COVID work.
 
-Use ingestion to write Bronze Delta tables, then have preprocessing read those tables with `spark.table(...)` instead of re-running notebook `%run` chains or re-fetching raw files.
+Use ingestion to write Bronze streaming tables, then have preprocessing read those tables with `spark.table(...)` instead of re-running notebook `%run` chains or re-fetching raw files.
 
 Example shape:
 
 ```text
 01_data_ingestion.py
-  -> Bronze Delta tables
-02_data_preprocessing.py
+  -> Bronze streaming tables
+02_data_preprocessing_covid.py
   -> reads Bronze tables
   -> writes Silver tables
 ```
@@ -76,9 +82,10 @@ Gold country-level analysis table
 
 ## Recommended Order
 
-1. Complete the baseline preprocessing pipeline.
-2. Persist ingestion outputs to Bronze Delta tables.
-3. Read Bronze tables from preprocessing.
-4. Standardize country codes and align observations.
-5. Build the country-level analytical table.
-6. Add telemetry only if it materially improves the analysis.
+1. Enable country-code and valid-date filters for COVID Silver.
+2. Validate country-date uniqueness and define duplicate handling.
+3. Add required-column and plausible-range checks for COVID Silver.
+4. Verify refresh behavior when the OWID snapshot changes.
+5. Standardize country codes and align observations.
+6. Build the country-level analytical table.
+7. Add telemetry only if it materially improves the analysis.
