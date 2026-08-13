@@ -3,7 +3,7 @@
 # [tool.databricks.environment]
 # environment_version = "5"
 # ///
-from landing.utils import download_as_csv_from_url_to_path
+from landing.utils import get_response_content_from_url, write_response_content_as_csv_to_path
 
 # COMMAND ----------
 
@@ -14,6 +14,6 @@ owid_covid_file_name = "owid_covid_raw"
 # COMMAND ----------
 
 # COVID CSV
-download_as_csv_from_url_to_path(covid_csv_url, owid_covid_data_raw_dir, owid_covid_file_name)
-
+response_content = get_response_content_from_url(covid_csv_url)
+write_response_content_as_csv_to_path(response_content, owid_covid_data_raw_dir, owid_covid_file_name)
 
