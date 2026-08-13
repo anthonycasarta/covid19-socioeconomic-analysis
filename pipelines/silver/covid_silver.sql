@@ -1,6 +1,6 @@
 
 CREATE OR REFRESH STREAMING TABLE
-    covid19_socioeconomic_analysis.silver.covid_daily
+    silver.covid_daily
 COMMENT 'Cleaned daily country-level COVID-19 time-series data'
 AS
 SELECT
@@ -53,7 +53,7 @@ SELECT
         AS has_negative_death_correction
 
 FROM STREAM
-    covid19_socioeconomic_analysis.bronze.covid_owid_raw;
+    bronze.covid_owid_raw;
 -- WHERE country_code RLIKE '^[A-Z]{3}$'
 --     AND observation_date IS NOT NULL;
     
