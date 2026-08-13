@@ -1,6 +1,6 @@
 # Roadmap
 
-This file records the next likely project directions after the current ingestion and COVID Silver prototype.
+This roadmap tracks the next steps for the Databricks COVID-19 socioeconomic analysis project.
 
 ## Completed
 
@@ -8,84 +8,117 @@ This file records the next likely project directions after the current ingestion
 - COVID-19 profiling and null-rate analysis are implemented.
 - `silver.covid_daily` exists as a cleaned COVID-19 streaming table.
 
-## Decision Summary
-
-- Structured DB pulls: implement now as Delta table reads/writes inside Databricks.
-- Telemetry: consider later if a good aggregated source supports the analysis.
-- Recursive or hierarchical API traversal: skip for now.
-
-## Structured DB Pulls
-
-This is the best near-term fit for the remaining COVID work.
-
-Use ingestion to write Bronze streaming tables, then have preprocessing read those tables with `spark.table(...)` instead of re-running notebook `%run` chains or re-fetching raw files.
-
-Example shape:
+## Current Structure
 
 ```text
-01_data_ingestion.py
-  -> Bronze streaming tables
-02_data_preprocessing_covid.py
-  -> reads Bronze tables
-  -> writes Silver tables
+covid19-socioeconomic-analysis/
+├── data/
+│   ├── health_centers_density.csv
+│   ├── hospital_beds.csv
+│   ├── hospital_density.csv
+│   └── hospital_medicine.csv
+├── landing/
+│   ├── covid.py
+│   ├── gdp.py
+│   └── healthcare.py
+├── pipelines/
+│   ├── bronze/
+│   │   ├── covid_bronze_raw.sql
+│   │   ├── gdp_bronze_raw.sql
+│   │   └── healthcare_bronze_raw.sql
+│   └── silver/
+│       ├── covid_silver.sql
+│       ├── gdp_silver.sql
+│       └── healthcare_silver.sql
+├── notebooks/
+│   ├── setup.py
+│   └── data_quality/
+│       └── covid_profile.py
+├── scripts/
+│   └── __init__.py
+├── README.md
+└── ROADMAP.md
 ```
 
-Why this fits:
+## Next Steps
 
-- Reproducible snapshots
-- Clear schema boundaries
-- Easier preprocessing and debugging
-- Better separation between raw ingestion and cleaning
+### Pipeline Organization
 
-If a real external database becomes available later, use JDBC only if it is authoritative and already maintained.
+1. Move catalog, schema, and volume creation into `notebooks/setup.py`.
+2. Move COVID-19 downloading into `landing/covid.py`.
+3. Move GDP downloading and ZIP extraction into `landing/gdp.py`.
+4. Move healthcare file copying into `landing/healthcare.py`.
+5. Remove duplicate table definitions from the old ingestion and preprocessing notebooks.
+6. Keep only declarative table definitions under `pipelines/`.
 
-## Telemetry
+### COVID-19 Processing
 
-Telemetry is optional and only makes sense if it answers a real analysis question.
+1. Detect whether the OWID source changed before saving another file.
+2. Save changed source data using immutable batch names.
+3. Preserve source filename and ingestion metadata in Bronze.
+4. Enable country-code and valid-date filters in Silver.
+5. Validate `(country_code, observation_date)` uniqueness.
+6. Define how historical reporting corrections and duplicate records are handled.
+7. Add required-column and plausible-range checks.
+8. Verify pipeline refresh behavior when the source snapshot changes.
 
-Possible useful features:
+### Remaining Data
 
-- Country-level mobility changes by category
-- Lockdown intensity or restriction response
-- Recovery speed after restrictions
+1. Create GDP Bronze and Silver pipeline definitions.
+2. Create healthcare Bronze and Silver pipeline definitions.
+3. Standardize country identifiers across all sources.
+4. Preserve source years, units, and reporting dimensions.
+5. Define how daily COVID-19 data aligns with annual indicators.
 
-Constraints:
+## Databricks Asset Bundle
 
-- Use only aggregated country- or region-level telemetry.
-- Avoid individual-level or device-level data.
-- Align telemetry to the same country codes and analysis period as the rest of the project.
+Implement the Databricks Asset Bundle after the landing and pipeline code is stable so jobs and pipeline configuration are version-controlled in Git.
 
-Add telemetry only after the baseline country-level analysis is working and a reliable public aggregated source has been identified.
-
-## Recursive or Hierarchical API Traversal
-
-Do not force this into the project.
-
-The current data sources are better handled through bulk or paginated endpoints than recursive discovery. Recursive traversal would add complexity without clear benefit unless a future source truly requires parent-child lookup.
-
-Reconsider only if a source exposes useful nested resources that cannot be retrieved directly in bulk.
-
-## Suggested Pipeline Shape
+Planned structure:
 
 ```text
-APIs, CSVs, and other sources
-            |
-            v
-Bronze raw snapshots in Delta
-            |
-            v
-Silver cleaned and aligned tables
-            |
-            v
-Gold country-level analysis table
+covid19-socioeconomic-analysis/
+├── databricks.yml
+├── resources/
+│   ├── jobs.yml
+│   └── pipelines.yml
+├── src/
+│   ├── landing/
+│   │   ├── covid.py
+│   │   ├── gdp.py
+│   │   └── healthcare.py
+│   └── pipelines/
+│       ├── bronze/
+│       │   ├── covid_bronze_raw.sql
+│       │   ├── gdp_bronze_raw.sql
+│       │   └── healthcare_bronze_raw.sql
+│       └── silver/
+│           ├── covid_silver.sql
+│           ├── gdp_silver.sql
+│           └── healthcare_silver.sql
+├── notebooks/
+│   └── data_quality/
+├── tests/
+├── README.md
+└── ROADMAP.md
 ```
 
-## Recommended Order
+The Asset Bundle should define:
 
-1. Enable country-code and valid-date filters for COVID Silver.
-2. Validate country-date uniqueness and define duplicate handling.
-3. Add required-column and plausible-range checks for COVID Silver.
-4. Verify refresh behavior when the OWID snapshot changes.
-5. Standardize country codes and align observations.
-6. Build the country-level analytical table.
-7. Add telemetry only if it materially improves the analysis.
+- A setup task
+- Source-file landing tasks
+- The Lakeflow pipeline
+- Task dependencies
+- Pipeline parameters
+- Compute configuration
+- Development and production targets
+- Schedules and permissions
+
+## Later Work
+
+- Build an integrated country-level analysis dataset.
+- Define the COVID-19 mortality outcome and analysis period.
+- Add exploratory analysis and visualizations.
+- Add automated pipeline and data-quality tests.
+- Consider aggregated telemetry only if it supports a specific analysis question.
+- Add statistical or machine-learning models only after the integrated dataset is stable.
