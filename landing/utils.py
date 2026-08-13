@@ -1,5 +1,23 @@
 from pathlib import Path
 import requests
+import io
+import zipfile
+
+
+
+def unzip_response_content(
+    response_content: bytes,
+) -> dict[str, bytes]:
+    extracted_files = {}
+
+    with zipfile.ZipFile(io.BytesIO(response_content)) as archive:
+        for member_name in archive.namelist():
+            file_name = Path(member_name).name
+
+            if file_name and file_name.endswith(".csv"):
+                extracted_files[file_name] = archive.read(member_name)
+
+    return extracted_files
 
 def get_response_content_from_url(url: str) -> bytes:
     response = requests.get(url, timeout=60)
