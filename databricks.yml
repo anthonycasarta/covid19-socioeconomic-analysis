@@ -6,9 +6,6 @@ include:
   - resources/*.yml
 
 variables:
-  workspace_host:
-    description: Databricks workspace URL
-
   catalog_name:
     description: Unity Catalog catalog
     default: covid19_socioeconomic_analysis
@@ -35,5 +32,3 @@ targets:
   dev:
     default: true
     mode: development
-    workspace:
-      host: ${var.workspace_host}
