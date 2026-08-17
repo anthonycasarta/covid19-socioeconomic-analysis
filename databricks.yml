@@ -17,16 +17,16 @@ variables:
     default: /Volumes/covid19_socioeconomic_analysis/bronze/gdp_raw/world_bank/data/
 
   health_centers_density_source:
-    default: /Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/source_a/health_centers_density/data/
+    default: /Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/health_centers_density/data/
 
   hospital_beds_source:
-    default: /Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/source_a/hospital_beds/data/
+    default: /Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/hospital_beds/data/
 
   hospital_density_source:
-    default: /Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/source_a/hospital_density/data/
+    default: /Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/hospital_density/data/
 
   hospital_medicine_source:
-    default: /Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/source_a/hospital_medicine/data/
+    default: /Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/hospital_medicine/data/
 
 targets:
   dev:

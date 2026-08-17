@@ -52,12 +52,19 @@ spark.sql(
 )
 # COMMAND ----------
 
-# Make data directories
+# MAGIC %md
+# MAGIC ##Make data directories
+
+# COMMAND ----------
+
+# OWID Covid-19
 owid_covid_data_raw_dir = (
     "/Volumes/covid19_socioeconomic_analysis/bronze/covid_raw/owid/data/"
 )
 dbutils.fs.mkdirs(owid_covid_data_raw_dir)
 
+
+# World Bank gdp_raw
 world_bank_gdp_data_raw_dir = (
     "/Volumes/covid19_socioeconomic_analysis/bronze/gdp_raw/world_bank/data/"
 )
@@ -67,7 +74,19 @@ world_bank_gdp_metadata_raw_dir = (
 dbutils.fs.mkdirs(world_bank_gdp_data_raw_dir)
 dbutils.fs.mkdirs(world_bank_gdp_metadata_raw_dir)
 
+
+# WHO Healthcare
 who_healthcare_data_raw_dir = (
-    "/Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/data/"
+    "/Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/"
 )
 dbutils.fs.mkdirs(who_healthcare_data_raw_dir)
+
+healthcare_data_dir_names = [
+    "health_centers_density/",
+    "hospital_beds/",
+    "hospital_density/",
+    "hospital_medicine/",
+]
+for dir_name in healthcare_data_dir_names:
+    for sub_dir in ["data/", "metadata/"]:
+        dbutils.fs.mkdirs(f"{who_healthcare_data_raw_dir}{dir_name}{sub_dir}")
