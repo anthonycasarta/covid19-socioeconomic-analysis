@@ -1,0 +1,34 @@
+bundle:
+  name: covid19-socioeconomic-analysis
+  databricks_cli_version: ">= 0.258.0"
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog_name:
+    description: Unity Catalog catalog
+    default: covid19_socioeconomic_analysis
+
+  covid_source:
+    default: /Volumes/covid19_socioeconomic_analysis/bronze/covid_raw/owid/data/
+
+  gdp_source:
+    default: /Volumes/covid19_socioeconomic_analysis/bronze/gdp_raw/world_bank/data/
+
+  health_centers_density_source:
+    default: /Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/health_centers_density/data/
+
+  hospital_beds_source:
+    default: /Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/hospital_beds/data/
+
+  hospital_density_source:
+    default: /Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/hospital_density/data/
+
+  hospital_medicine_source:
+    default: /Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/hospital_medicine/data/
+
+targets:
+  dev:
+    default: true
+    mode: development

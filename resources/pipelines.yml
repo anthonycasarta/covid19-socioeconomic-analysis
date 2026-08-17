@@ -1,0 +1,21 @@
+resources:
+  pipelines:
+    socioeconomic_pipeline:
+      name: covid19-socioeconomic-pipeline
+      catalog: ${var.catalog_name}
+      schema: bronze
+      serverless: true
+      continuous: false
+      root_path: ../pipelines
+
+      libraries:
+        - glob:
+            include: ../pipelines/**
+
+      configuration:
+        covid_source: ${var.covid_source}
+        gdp_source: ${var.gdp_source}
+        health_centers_density_source: ${var.health_centers_density_source}
+        hospital_beds_source: ${var.hospital_beds_source}
+        hospital_density_source: ${var.hospital_density_source}
+        hospital_medicine_source: ${var.hospital_medicine_source}
