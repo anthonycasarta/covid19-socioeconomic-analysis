@@ -1,4 +1,3 @@
-````markdown
 # COVID-19 Socioeconomic Analysis
 
 A Databricks Lakehouse project for analyzing relationships between COVID-19 mortality, economic conditions, and healthcare capacity across countries.
@@ -307,4 +306,3 @@ HAVING COUNT(*) > 1;
 - The datasets have not yet been joined or analyzed.
 
 See `ROADMAP.md` for planned work.
-````
