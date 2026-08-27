@@ -146,7 +146,7 @@
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC with covid_normalized_metrics as
+# MAGIC create or replace temp view covid_normalized_metrics as
 # MAGIC (
 # MAGIC select
 # MAGIC     country,
@@ -177,7 +177,8 @@
 # MAGIC     weekly_icu_admissions_per_million,
 # MAGIC     excess_mortality_cumulative_per_million
 # MAGIC from covid_owid_raw
-# MAGIC )
+# MAGIC );
+# MAGIC
 # MAGIC select
 # MAGIC     *
 # MAGIC from 
@@ -189,7 +190,7 @@
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC with owid_country_healthcare as
+# MAGIC create or replace temp view owid_country_healthcare as
 # MAGIC (
 # MAGIC     select
 # MAGIC         country,
@@ -202,7 +203,8 @@
 # MAGIC         hospital_beds_per_thousand,
 # MAGIC         human_development_index
 # MAGIC     from covid_owid_raw
-# MAGIC )
+# MAGIC );
+# MAGIC
 # MAGIC select
 # MAGIC     *
 # MAGIC from 
@@ -214,7 +216,7 @@
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC with owid_country_socioeconomic as
+# MAGIC create or replace temp view owid_country_socioeconomic as
 # MAGIC (
 # MAGIC     select
 # MAGIC         country,
@@ -222,7 +224,8 @@
 # MAGIC         gdp_per_capita,
 # MAGIC         extreme_poverty
 # MAGIC     from covid_owid_raw
-# MAGIC )
+# MAGIC );
+# MAGIC
 # MAGIC select
 # MAGIC     *
 # MAGIC from 
