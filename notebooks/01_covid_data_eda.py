@@ -21,12 +21,12 @@
 
 # COMMAND ----------
 
-# DBTITLE 1,Null analysis: Core metrics by date
 # MAGIC %sql
 # MAGIC -- The covid_core_metrics table will be created in the pipeline
-# MAGIC -- For now, this will remain a cte just to do null checks without preemptively creating the table
-# MAGIC with 
-# MAGIC covid_core_metrics as
+# MAGIC -- For now, this will remain a temporary view so as to not preemptively create the table
+# MAGIC create or replace temp view 
+# MAGIC     covid_core_metrics 
+# MAGIC as
 # MAGIC (
 # MAGIC select
 # MAGIC     country,
@@ -57,9 +57,24 @@
 # MAGIC     stringency_index,
 # MAGIC     reproduction_rate
 # MAGIC from covid_owid_raw
-# MAGIC ),
+# MAGIC );
+# MAGIC
+# MAGIC select
+# MAGIC     *
+# MAGIC from
+# MAGIC     covid_core_metrics
+# MAGIC limit
+# MAGIC     10
+# MAGIC ;
+
+# COMMAND ----------
+
+# DBTITLE 1,Null analysis: Core metrics by date
+# MAGIC %sql
 # MAGIC -- Null rates over time by month 
-# MAGIC covid_core_nulls as
+# MAGIC with 
+# MAGIC     covid_core_nulls 
+# MAGIC as
 # MAGIC (
 # MAGIC     select
 # MAGIC         date_trunc('MONTH', date) as month,
@@ -89,7 +104,8 @@
 # MAGIC         case when excess_mortality_cumulative_absolute is null then 1 else 0 end as excess_mortality_cumulative_absolute_null,
 # MAGIC         case when stringency_index is null then 1 else 0 end as stringency_index_null,
 # MAGIC         case when reproduction_rate is null then 1 else 0 end as reproduction_rate_null
-# MAGIC     from covid_core_metrics
+# MAGIC     from 
+# MAGIC         covid_core_metrics
 # MAGIC )
 # MAGIC select
 # MAGIC     month,
@@ -119,9 +135,13 @@
 # MAGIC     avg(excess_mortality_cumulative_absolute_null) as excess_mortality_cumulative_absolute_null_rate,
 # MAGIC     avg(stringency_index_null) as stringency_index_null_rate,
 # MAGIC     avg(reproduction_rate_null) as reproduction_rate_null_rate
-# MAGIC from covid_core_nulls
-# MAGIC group by month
-# MAGIC order by month;
+# MAGIC from 
+# MAGIC     covid_core_nulls
+# MAGIC group by 
+# MAGIC     month
+# MAGIC order by 
+# MAGIC     month
+# MAGIC ;
 
 # COMMAND ----------
 
