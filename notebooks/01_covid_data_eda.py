@@ -21,10 +21,14 @@
 
 # COMMAND ----------
 
-# DBTITLE 1,Create bronze table: Core metrics
+# DBTITLE 1,Null analysis: Core metrics by date
 # MAGIC %sql
-# MAGIC CREATE OR REPLACE TABLE covid_core_metrics AS
-# MAGIC SELECT
+# MAGIC -- The covid_core_metrics table will be created in the pipeline
+# MAGIC -- For now, this will remain a cte just to do null checks without preemptively creating the table
+# MAGIC with 
+# MAGIC covid_core_metrics as
+# MAGIC (
+# MAGIC select
 # MAGIC     country,
 # MAGIC     date,
 # MAGIC     code,
@@ -52,88 +56,10 @@
 # MAGIC     excess_mortality_cumulative_absolute,
 # MAGIC     stringency_index,
 # MAGIC     reproduction_rate
-# MAGIC FROM covid_owid_raw
-
-# COMMAND ----------
-
-# DBTITLE 1,Create bronze table: Normalized metrics
-# MAGIC %sql
-# MAGIC CREATE OR REPLACE TABLE covid_normalized_metrics AS
-# MAGIC SELECT
-# MAGIC     country,
-# MAGIC     date,
-# MAGIC     new_cases_smoothed,
-# MAGIC     total_cases_per_million,
-# MAGIC     new_cases_per_million,
-# MAGIC     new_cases_smoothed_per_million,
-# MAGIC     new_deaths_smoothed,
-# MAGIC     total_deaths_per_million,
-# MAGIC     new_deaths_per_million,
-# MAGIC     new_deaths_smoothed_per_million,
-# MAGIC     total_tests_per_thousand,
-# MAGIC     new_tests_per_thousand,
-# MAGIC     new_tests_smoothed,
-# MAGIC     new_tests_smoothed_per_thousand,
-# MAGIC     total_vaccinations_per_hundred,
-# MAGIC     people_vaccinated_per_hundred,
-# MAGIC     people_fully_vaccinated_per_hundred,
-# MAGIC     total_boosters_per_hundred,
-# MAGIC     new_vaccinations_smoothed,
-# MAGIC     new_vaccinations_smoothed_per_million,
-# MAGIC     new_people_vaccinated_smoothed,
-# MAGIC     new_people_vaccinated_smoothed_per_hundred,
-# MAGIC     hosp_patients_per_million,
-# MAGIC     weekly_hosp_admissions_per_million,
-# MAGIC     icu_patients_per_million,
-# MAGIC     weekly_icu_admissions_per_million,
-# MAGIC     excess_mortality_cumulative_per_million
-# MAGIC FROM covid_owid_raw
-
-# COMMAND ----------
-
-# DBTITLE 1,Create bronze table: Healthcare demographics
-# MAGIC %sql
-# MAGIC CREATE OR REPLACE TABLE owid_country_healthcare AS
-# MAGIC SELECT
-# MAGIC     country,
-# MAGIC     date,
-# MAGIC     population_density,
-# MAGIC     median_age,
-# MAGIC     life_expectancy,
-# MAGIC     diabetes_prevalence,
-# MAGIC     handwashing_facilities,
-# MAGIC     hospital_beds_per_thousand,
-# MAGIC     human_development_index
-# MAGIC FROM covid_owid_raw
-
-# COMMAND ----------
-
-# DBTITLE 1,Create bronze table: Socioeconomic indicators
-# MAGIC %sql
-# MAGIC CREATE OR REPLACE TABLE owid_country_socioeconomic AS
-# MAGIC SELECT
-# MAGIC     country,
-# MAGIC     date,
-# MAGIC     gdp_per_capita,
-# MAGIC     extreme_poverty
-# MAGIC FROM covid_owid_raw
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC select
-# MAGIC     *
-# MAGIC from
-# MAGIC     hospital_beds_raw
-# MAGIC
-# MAGIC ;
-
-# COMMAND ----------
-
-# DBTITLE 1,Null analysis: Core metrics by date
-# MAGIC %sql
-# MAGIC -- Null rates over time by month (wide format for easy multi-line charting)
-# MAGIC with covid_core_nulls as
+# MAGIC from covid_owid_raw
+# MAGIC ),
+# MAGIC -- Null rates over time by month 
+# MAGIC covid_core_nulls as
 # MAGIC (
 # MAGIC     select
 # MAGIC         date_trunc('MONTH', date) as month,
@@ -196,3 +122,91 @@
 # MAGIC from covid_core_nulls
 # MAGIC group by month
 # MAGIC order by month;
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC with covid_normalized_metrics as
+# MAGIC (
+# MAGIC select
+# MAGIC     country,
+# MAGIC     date,
+# MAGIC     new_cases_smoothed,
+# MAGIC     total_cases_per_million,
+# MAGIC     new_cases_per_million,
+# MAGIC     new_cases_smoothed_per_million,
+# MAGIC     new_deaths_smoothed,
+# MAGIC     total_deaths_per_million,
+# MAGIC     new_deaths_per_million,
+# MAGIC     new_deaths_smoothed_per_million,
+# MAGIC     total_tests_per_thousand,
+# MAGIC     new_tests_per_thousand,
+# MAGIC     new_tests_smoothed,
+# MAGIC     new_tests_smoothed_per_thousand,
+# MAGIC     total_vaccinations_per_hundred,
+# MAGIC     people_vaccinated_per_hundred,
+# MAGIC     people_fully_vaccinated_per_hundred,
+# MAGIC     total_boosters_per_hundred,
+# MAGIC     new_vaccinations_smoothed,
+# MAGIC     new_vaccinations_smoothed_per_million,
+# MAGIC     new_people_vaccinated_smoothed,
+# MAGIC     new_people_vaccinated_smoothed_per_hundred,
+# MAGIC     hosp_patients_per_million,
+# MAGIC     weekly_hosp_admissions_per_million,
+# MAGIC     icu_patients_per_million,
+# MAGIC     weekly_icu_admissions_per_million,
+# MAGIC     excess_mortality_cumulative_per_million
+# MAGIC from covid_owid_raw
+# MAGIC )
+# MAGIC select
+# MAGIC     *
+# MAGIC from 
+# MAGIC     covid_normalized_metrics
+# MAGIC limit
+# MAGIC     10
+# MAGIC ;
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC with owid_country_healthcare as
+# MAGIC (
+# MAGIC     select
+# MAGIC         country,
+# MAGIC         date,
+# MAGIC         population_density,
+# MAGIC         median_age,
+# MAGIC         life_expectancy,
+# MAGIC         diabetes_prevalence,
+# MAGIC         handwashing_facilities,
+# MAGIC         hospital_beds_per_thousand,
+# MAGIC         human_development_index
+# MAGIC     from covid_owid_raw
+# MAGIC )
+# MAGIC select
+# MAGIC     *
+# MAGIC from 
+# MAGIC     owid_country_healthcare
+# MAGIC limit
+# MAGIC     10
+# MAGIC ;
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC with owid_country_socioeconomic as
+# MAGIC (
+# MAGIC     select
+# MAGIC         country,
+# MAGIC         date,
+# MAGIC         gdp_per_capita,
+# MAGIC         extreme_poverty
+# MAGIC     from covid_owid_raw
+# MAGIC )
+# MAGIC select
+# MAGIC     *
+# MAGIC from 
+# MAGIC     owid_country_socioeconomic
+# MAGIC limit
+# MAGIC     10
+# MAGIC ;
