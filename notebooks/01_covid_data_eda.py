@@ -3,9 +3,19 @@
 # [tool.databricks.environment]
 # environment_version = "5"
 # ///
+# MAGIC %md
+# MAGIC ## Set Catalog and Schema
+
+# COMMAND ----------
+
 # MAGIC %sql
 # MAGIC USE CATALOG covid19_socioeconomic_analysis;
 # MAGIC USE SCHEMA bronze;
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Initial look at OWID Covid-19 raw data
 
 # COMMAND ----------
 
@@ -18,6 +28,11 @@
 # MAGIC LIMIT
 # MAGIC     10
 # MAGIC ;
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Create a Temporary View consisting of only core metric data
 
 # COMMAND ----------
 
@@ -66,6 +81,11 @@
 # MAGIC limit
 # MAGIC     10
 # MAGIC ;
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Analyze Null rates on the core metrics
 
 # COMMAND ----------
 
@@ -145,6 +165,11 @@
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ## Create a Temporary View consisting of only normalized metric data
+
+# COMMAND ----------
+
 # MAGIC %sql
 # MAGIC create or replace temp view covid_normalized_metrics as
 # MAGIC (
@@ -189,6 +214,11 @@
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ## Create a Temporary View consisting of only healthcare related data by country
+
+# COMMAND ----------
+
 # MAGIC %sql
 # MAGIC create or replace temp view owid_country_healthcare as
 # MAGIC (
@@ -212,6 +242,11 @@
 # MAGIC limit
 # MAGIC     10
 # MAGIC ;
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Create a Temporary View consisting of only scocioeconomic related data by country
 
 # COMMAND ----------
 
