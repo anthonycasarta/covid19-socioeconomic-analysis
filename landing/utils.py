@@ -64,10 +64,10 @@ def get_response_content_from_url(url: str) -> bytes:
     return response.content
 
 
-def write_response_content_as_csv_to_path(
-    response_content: bytes, path: str, file_name: str
+def write_response_content_as_file_to_path(
+    response_content: bytes, path: str, file_name: str, file_extension: str
 ) -> None:
-    destination_path = Path(path) / f"{file_name}.csv"
+    destination_path = Path(path) / f"{file_name}.{file_extension}"
     destination_path.parent.mkdir(parents=True, exist_ok=True)
 
     destination_path.write_bytes(response_content)

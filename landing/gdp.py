@@ -8,7 +8,7 @@ from pathlib import Path
 from utils import (
     get_response_content_from_url,
     unzip_response_content,
-    write_response_content_as_csv_to_path,
+    write_response_content_as_file_to_path,
 )
 
 # COMMAND ----------
@@ -34,14 +34,16 @@ for file_name, file_content in extracted_files.items():
     file_stem = Path(file_name).stem
 
     if file_name.startswith("Metadata_"):
-        write_response_content_as_csv_to_path(
+        write_response_content_as_file_to_path(
             file_content,
             GDP_METADATA_RAW_DIR,
             file_stem,
+            "csv"
         )
     else:
-        write_response_content_as_csv_to_path(
+        write_response_content_as_file_to_path(
             file_content,
             GDP_DATA_RAW_DIR,
             "world_bank_gdp_per_capita",
+            "csv"
         )
