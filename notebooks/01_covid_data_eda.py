@@ -3,12 +3,12 @@
 # [tool.databricks.environment]
 # environment_version = "5"
 # ///
-# MAGIC %md
-# MAGIC ## Set Catalog and Schema
+import plotly.express as px
 
 # COMMAND ----------
 
-import plotly.express as px
+# MAGIC %md
+# MAGIC ## Set Catalog and Schema
 
 # COMMAND ----------
 
@@ -162,6 +162,8 @@ import plotly.express as px
 # MAGIC     country
 # MAGIC from
 # MAGIC     covid_core_metrics
+# MAGIC order by
+# MAGIC     country
 # MAGIC ;
 
 # COMMAND ----------
@@ -471,9 +473,20 @@ figure.show()
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ### Final Silver Covid Core Metrics Table
+# MAGIC ---
+# MAGIC
+# MAGIC - For simplicity's sake, we will remove records with null reproduction_rate and stringency_index for now. In the future, we will include these records and impute missing data.
+
+# COMMAND ----------
+
 # MAGIC %sql
 # MAGIC select
 # MAGIC   country,
+# MAGIC   date,
+# MAGIC   code,
+# MAGIC   continent,
 # MAGIC   total_cases,
 # MAGIC   new_cases,
 # MAGIC   total_deaths,
@@ -481,9 +494,15 @@ figure.show()
 # MAGIC   stringency_index,
 # MAGIC   reproduction_rate
 # MAGIC from
-# MAGIC     covid_core_metrics
+# MAGIC     covid_owid_raw
 # MAGIC where
-# MAGIC     total_cases is not null
+# MAGIC     date < '2023-01-01'
+# MAGIC     and country not in ('Asia excl. China',  'World', 'World excl. China', 'World excl. China, South Korea', 'World excl. China, South Korea, Japan and Singapore', 'Winter Olympics 2022', 'Summer Olympics 2020', 'Low-income countries', 'Lower-middle-income countries', 'High-income countries', 'European Union (27)')
+# MAGIC     and country is not null
+# MAGIC     and date is not null
+# MAGIC     and code is not null
+# MAGIC     and continent is not null
+# MAGIC     and total_cases is not null
 # MAGIC     and new_cases is not null
 # MAGIC     and total_deaths is not null
 # MAGIC     and new_deaths is not null
