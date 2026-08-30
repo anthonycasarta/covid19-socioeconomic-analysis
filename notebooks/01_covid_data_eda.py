@@ -94,12 +94,7 @@ import plotly.express as px
 # MAGIC ---------
 # MAGIC
 # MAGIC ### Overview of take aways:
-# MAGIC 1. After January 2023 most of the data has a null rate of 0.8 or above. Given that most the of columns have such a high null rate at the start of that year, all rows with a date after December 2022 not be considered. The majority of countries are missing values in the same columns. So, dropping rows is not an option because it will significantly reduce the number of countries in the dataset.
-# MAGIC
-# MAGIC <div>
-# MAGIC <strong> Note: </strong>
-# MAGIC </div>
-# MAGIC This alteration is done in the intial temporary view statement.
+# MAGIC 1. The minimum values of the numeric columns are less than or equal to the value 0. That means that nulls cannot represent 0 values, confirming that null values are missing values and cannot be replaced with the value 0.
 # MAGIC
 # MAGIC 2. Some countries are reused or grouped with other countries. Where possible, each row will only consist of one country. Exclude countries: Asia excl. China; World; World excl. China; World excl. China, South Korea; World excl. China, South Korea, Japan and Singapore; Winter Olympics 2022; Summer Olympics 2020; Low-income countries; Lower-middle-income countries; High-income countries; European Union (27).
 # MAGIC
@@ -108,12 +103,52 @@ import plotly.express as px
 # MAGIC </div>
 # MAGIC The countries grouped, such as: Low-income countries, Lower-middle-income countries, and so on can perhaps be used in the future once we categorize the countries as falling into one of these groups. That is to say, we can analyze how our classifications compare to the ones that the dataset includes. 
 # MAGIC
-# MAGIC 3. For all numeric data, nulls do not indicate a value of 0. The value 0 is used to indicate when there are no occurences. This means that null values indicate missing data.
+# MAGIC 3. After January 2023 most of the data has a null rate of 0.8 or above. Given that most the of columns have such a high null rate at the start of that year, all rows with a date after December 2022 not be considered. The majority of countries are missing values in the same columns. So, dropping rows is not an option because it will significantly reduce the number of countries in the dataset.
+# MAGIC
+# MAGIC
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ###1. List all distinct countries in the dataset
+# MAGIC ### 1. Find Minimum Values of Numeric Columns
+# MAGIC ----
+# MAGIC
+# MAGIC - The minimum values of the numeric columns are less than or equal to the value 0. That means that nulls cannot represent 0 values, confirming that null values are missing values and cannot be replaced with the value 0.
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select
+# MAGIC     min(total_cases) as total_cases_min_value,
+# MAGIC     min(new_cases) as new_cases_min_value,
+# MAGIC     min(total_deaths) as total_deaths_min_value,
+# MAGIC     min(new_deaths) as new_deaths_min_value,
+# MAGIC     min(total_tests) as total_tests_min_value,
+# MAGIC     min(new_tests) as new_tests_min_value,
+# MAGIC     min(positive_rate) as positive_rate_min_value,
+# MAGIC     min(tests_per_case) as tests_per_case_min_value,
+# MAGIC     min(total_vaccinations) as total_vaccinations_min_value,
+# MAGIC     min(people_vaccinated) as people_vaccinated_min_value,
+# MAGIC     min(people_fully_vaccinated) as people_fully_vaccinated_min_value,
+# MAGIC     min(total_boosters) as total_boosters_min_value,
+# MAGIC     min(new_vaccinations) as new_vaccinations_min_value,
+# MAGIC     min(hosp_patients) as hosp_patients_min_value,
+# MAGIC     min(weekly_hosp_admissions) as weekly_hosp_admissions_min_value,
+# MAGIC     min(icu_patients) as icu_patients_min_value,
+# MAGIC     min(weekly_icu_admissions) as weekly_icu_admissions_min_value,
+# MAGIC     min(excess_mortality) as excess_mortality_min_value,
+# MAGIC     min(excess_mortality_cumulative) as excess_mortality_cumulative_min_value,
+# MAGIC     min(excess_mortality_cumulative_absolute) as excess_mortality_cumulative_absolute_min_value,
+# MAGIC     min(stringency_index) as stringency_index_min_value,
+# MAGIC     min(reproduction_rate) as reproduction_rate_min_value
+# MAGIC from 
+# MAGIC     covid_core_metrics;
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### 2. List all distinct countries in the dataset
 # MAGIC ---
 # MAGIC
 # MAGIC - Some countries are reused or grouped with other countries. Where possible, each row will only consist of one country. Exclude countries: Asia excl. China; World; World excl. China; World excl. China, South Korea; World excl. China, South Korea, Japan and Singapore; Winter Olympics 2022; Summer Olympics 2020; Low-income countries; Lower-middle-income countries; High-income countries; European Union (27).
@@ -132,7 +167,7 @@ import plotly.express as px
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ###2. Analyze null rates
+# MAGIC ### 3. Analyze null rates
 # MAGIC ----
 # MAGIC
 # MAGIC <div>
@@ -225,6 +260,14 @@ order by
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC #### Heatmap of Monthly Null Rates
+# MAGIC ----
+# MAGIC
+# MAGIC - After January 2023 most of the data has a null rate of 0.8 or above. Given that most the of columns have such a high null rate at the start of that year, all rows with a date after December 2022 not be considered.
+
+# COMMAND ----------
+
 heatmap_data_by_month = (
     null_rates_by_month_df
     .orderBy("month")
@@ -234,14 +277,6 @@ heatmap_data_by_month = (
 )
 
 metric_names = heatmap_data_by_month.index.tolist()
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC #### Heatmap of Monthly Null Rates
-# MAGIC ----
-# MAGIC
-# MAGIC - After January 2023 most of the data has a null rate of 0.8 or above. Given that most the of columns have such a high null rate at the start of that year, all rows with a date after December 2022 not be considered.
 
 # COMMAND ----------
 
@@ -370,6 +405,14 @@ order by
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC #### Heatmap of Null Rates by Country
+# MAGIC ----
+# MAGIC
+# MAGIC - The majority of countries are missing values in the same columns. So, dropping rows is not an option because it will significantly reduce the number of countries in the dataset.
+
+# COMMAND ----------
+
 heatmap_data_by_country = (
     null_rates_by_country_df
     .orderBy("country")
@@ -380,14 +423,6 @@ heatmap_data_by_country = (
 
 metric_names = heatmap_data_by_country.index.tolist()
 country_names = heatmap_data_by_country.columns.tolist()
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC #### Heatmap of Null Rates by Country
-# MAGIC ----
-# MAGIC
-# MAGIC - The majority of countries are missing values in the same columns. So, dropping rows is not an option because it will significantly reduce the number of countries in the dataset.
 
 # COMMAND ----------
 
@@ -433,35 +468,6 @@ figure.update_coloraxes(
 )
 
 figure.show()
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC select
-# MAGIC     min(total_cases) as total_cases_min_value,
-# MAGIC     min(new_cases) as new_cases_min_value,
-# MAGIC     min(total_deaths) as total_deaths_min_value,
-# MAGIC     min(new_deaths) as new_deaths_min_value,
-# MAGIC     min(total_tests) as total_tests_min_value,
-# MAGIC     min(new_tests) as new_tests_min_value,
-# MAGIC     min(positive_rate) as positive_rate_min_value,
-# MAGIC     min(tests_per_case) as tests_per_case_min_value,
-# MAGIC     min(total_vaccinations) as total_vaccinations_min_value,
-# MAGIC     min(people_vaccinated) as people_vaccinated_min_value,
-# MAGIC     min(people_fully_vaccinated) as people_fully_vaccinated_min_value,
-# MAGIC     min(total_boosters) as total_boosters_min_value,
-# MAGIC     min(new_vaccinations) as new_vaccinations_min_value,
-# MAGIC     min(hosp_patients) as hosp_patients_min_value,
-# MAGIC     min(weekly_hosp_admissions) as weekly_hosp_admissions_min_value,
-# MAGIC     min(icu_patients) as icu_patients_min_value,
-# MAGIC     min(weekly_icu_admissions) as weekly_icu_admissions_min_value,
-# MAGIC     min(excess_mortality) as excess_mortality_min_value,
-# MAGIC     min(excess_mortality_cumulative) as excess_mortality_cumulative_min_value,
-# MAGIC     min(excess_mortality_cumulative_absolute) as excess_mortality_cumulative_absolute_min_value,
-# MAGIC     min(stringency_index) as stringency_index_min_value,
-# MAGIC     min(reproduction_rate) as reproduction_rate_min_value
-# MAGIC from 
-# MAGIC     covid_core_metrics;
 
 # COMMAND ----------
 
