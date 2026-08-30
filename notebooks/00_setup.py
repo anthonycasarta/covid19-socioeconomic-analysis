@@ -30,6 +30,7 @@ spark.sql(
         CREATE SCHEMA IF NOT EXISTS covid19_socioeconomic_analysis.gold;
         """
 )
+
 # COMMAND ----------
 
 # Create volumes
@@ -50,6 +51,7 @@ spark.sql(
         CREATE VOLUME IF NOT EXISTS covid19_socioeconomic_analysis.bronze.healthcare_raw;
         """
 )
+
 # COMMAND ----------
 
 # MAGIC %md
@@ -61,7 +63,11 @@ spark.sql(
 owid_covid_data_raw_dir = (
     "/Volumes/covid19_socioeconomic_analysis/bronze/covid_raw/owid/data/"
 )
+owid_covid_metadata_raw_dir = (
+    "/Volumes/covid19_socioeconomic_analysis/bronze/covid_raw/owid/metadata/"
+)
 dbutils.fs.mkdirs(owid_covid_data_raw_dir)
+dbutils.fs.mkdirs(owid_covid_metadata_raw_dir)
 
 
 # World Bank gdp_raw
