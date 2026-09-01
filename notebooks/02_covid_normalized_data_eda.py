@@ -438,7 +438,7 @@ figure.show()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### Final Silver Covid Core Metrics Table
+# MAGIC ### Final Silver Covid Normalized Metrics Table
 # MAGIC ----
 
 # COMMAND ----------
