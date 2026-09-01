@@ -37,3 +37,29 @@
 # MAGIC limit
 # MAGIC     10
 # MAGIC ;
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # Analyze OWID Socioeconomic table
+# MAGIC ---------
+# MAGIC
+# MAGIC ### Overview of take aways:
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### 1. Find Minimum Values of Numeric Columns
+# MAGIC ----
+# MAGIC
+# MAGIC - Minimum values of 0 exist for numeric features. So, a null value does not mean 0, but must be imputed by some other method or dropped.
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select
+# MAGIC     min(gdp_per_capita),
+# MAGIC     min(extreme_poverty)
+# MAGIC from
+# MAGIC     owid_country_socioeconomic
+# MAGIC ;
