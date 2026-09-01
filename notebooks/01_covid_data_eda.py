@@ -515,55 +515,6 @@ figure.show()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Create a Temporary View consisting of only normalized metric data
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC create or replace temp view covid_normalized_metrics as
-# MAGIC (
-# MAGIC select
-# MAGIC     country,
-# MAGIC     date,
-# MAGIC     new_cases_smoothed,
-# MAGIC     total_cases_per_million,
-# MAGIC     new_cases_per_million,
-# MAGIC     new_cases_smoothed_per_million,
-# MAGIC     new_deaths_smoothed,
-# MAGIC     total_deaths_per_million,
-# MAGIC     new_deaths_per_million,
-# MAGIC     new_deaths_smoothed_per_million,
-# MAGIC     total_tests_per_thousand,
-# MAGIC     new_tests_per_thousand,
-# MAGIC     new_tests_smoothed,
-# MAGIC     new_tests_smoothed_per_thousand,
-# MAGIC     total_vaccinations_per_hundred,
-# MAGIC     people_vaccinated_per_hundred,
-# MAGIC     people_fully_vaccinated_per_hundred,
-# MAGIC     total_boosters_per_hundred,
-# MAGIC     new_vaccinations_smoothed,
-# MAGIC     new_vaccinations_smoothed_per_million,
-# MAGIC     new_people_vaccinated_smoothed,
-# MAGIC     new_people_vaccinated_smoothed_per_hundred,
-# MAGIC     hosp_patients_per_million,
-# MAGIC     weekly_hosp_admissions_per_million,
-# MAGIC     icu_patients_per_million,
-# MAGIC     weekly_icu_admissions_per_million,
-# MAGIC     excess_mortality_cumulative_per_million
-# MAGIC from covid_owid_raw
-# MAGIC );
-# MAGIC
-# MAGIC select
-# MAGIC     *
-# MAGIC from 
-# MAGIC     covid_normalized_metrics
-# MAGIC limit
-# MAGIC     10
-# MAGIC ;
-
-# COMMAND ----------
-
-# MAGIC %md
 # MAGIC ## Create a Temporary View consisting of only healthcare related data by country
 
 # COMMAND ----------
@@ -588,32 +539,6 @@ figure.show()
 # MAGIC     *
 # MAGIC from 
 # MAGIC     owid_country_healthcare
-# MAGIC limit
-# MAGIC     10
-# MAGIC ;
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Create a Temporary View consisting of only scocioeconomic related data by country
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC create or replace temp view owid_country_socioeconomic as
-# MAGIC (
-# MAGIC     select
-# MAGIC         country,
-# MAGIC         date,
-# MAGIC         gdp_per_capita,
-# MAGIC         extreme_poverty
-# MAGIC     from covid_owid_raw
-# MAGIC );
-# MAGIC
-# MAGIC select
-# MAGIC     *
-# MAGIC from 
-# MAGIC     owid_country_socioeconomic
 # MAGIC limit
 # MAGIC     10
 # MAGIC ;
