@@ -63,3 +63,24 @@
 # MAGIC from
 # MAGIC     owid_country_socioeconomic
 # MAGIC ;
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### 2. List all distinct countries in the dataset
+# MAGIC ---
+# MAGIC
+# MAGIC - Some countries are reused or grouped with other countries. Where possible, each row will only consist of one country. Exclude countries: Asia excl. China; World; World excl. China; World excl. China, South Korea; World excl. China, South Korea, Japan and Singapore; Winter Olympics 2022; Summer Olympics 2020; Low-income countries; Lower-middle-income countries; High-income countries; European Union (27).
+# MAGIC
+# MAGIC - The countries grouped, such as: Low-income countries, Lower-middle-income countries, and so on can perhaps be used in the future once we categorize the countries as falling into one of these groups. That is to say, we can analyze how our classifications compare to the ones that the dataset includes.
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select distinct
+# MAGIC     country
+# MAGIC from
+# MAGIC     owid_country_socioeconomic
+# MAGIC order by
+# MAGIC     country
+# MAGIC ;
