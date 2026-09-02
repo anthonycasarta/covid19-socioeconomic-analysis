@@ -7,9 +7,9 @@ resources:
         - task_key: setup
           notebook_task:
             notebook_path: ../notebooks/00_setup.py
-
-    socioeconomic_etl:
-      name: covid19-socioeconomic-etl
+    
+    source_landing:
+      name: covid19-socioeconomic-source-landing
 
       tasks:
         - task_key: land_covid
@@ -26,11 +26,11 @@ resources:
             base_parameters:
               source_dir: ${workspace.file_path}/data
 
+    socioeconomic_etl:
+      name: covid19-socioeconomic-etl
+
+      tasks:
         - task_key: run_pipeline
-          depends_on:
-            - task_key: land_covid
-            - task_key: land_gdp
-            - task_key: land_healthcare
           pipeline_task:
             pipeline_id: ${resources.pipelines.socioeconomic_pipeline.id}
             full_refresh: false
