@@ -9,7 +9,7 @@ select
     life_expectancy,
     diabetes_prevalence,
     hospital_beds_per_thousand
-from 
+from stream
     bronze.covid_owid_raw
 where
     country not in ('Asia excl. China',  'World', 'World excl. China', 'World excl. China and South Korea', 'World excl. China, South Korea, Japan and Singapore', 'Winter Olympics 2022', 'Summer Olympics 2020', 'Low-income countries', 'Lower-middle-income countries', 'High-income countries', 'European Union (27)')
