@@ -3,9 +3,10 @@ create or refresh streaming table
 as
 select
     country,
-    date,
     code,
     continent,
+    date,
+    population,
     total_cases,
     new_cases,
     total_deaths,
