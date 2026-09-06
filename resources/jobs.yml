@@ -7,7 +7,7 @@ resources:
         - task_key: setup
           notebook_task:
             notebook_path: ../notebooks/00_setup.py
-    
+
     source_landing:
       name: covid19-socioeconomic-source-landing
 
@@ -34,3 +34,9 @@ resources:
           pipeline_task:
             pipeline_id: ${resources.pipelines.socioeconomic_pipeline.id}
             full_refresh: false
+
+        - task_key: run_gdp_clustering
+          depends_on:
+            - task_key: run_pipeline
+          notebook_task:
+            notebook_path: ../notebooks/05_owid_income_kmeans_clustering.py
