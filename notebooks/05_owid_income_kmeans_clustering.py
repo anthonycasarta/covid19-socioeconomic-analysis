@@ -6,6 +6,7 @@
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.clustering import KMeans
 from pyspark.sql import functions as F
+import math
 
 # COMMAND ----------
 
@@ -86,4 +87,142 @@ display(
         "cluster_id",
     )
     .orderBy("gdp_per_capita")
+)
+
+# COMMAND ----------
+
+log_centers = [
+    float(center[0])
+    for center in model.clusterCenters()
+]
+
+cluster_centers = [
+    (
+        cluster_id,
+        log_center,
+        math.exp(log_center),
+    )
+    for cluster_id, log_center in enumerate(log_centers)
+]
+
+cluster_centers
+
+# COMMAND ----------
+
+ordered_centers = sorted(
+    cluster_centers,
+    key=lambda item: item[2],
+)
+
+income_labels = ["Low-GDP", "Middle-GDP", "High-GDP"]
+
+cluster_mapping_rows = [
+    (
+        int(cluster_id),
+        income_labels[position],
+        float(log_center),
+        float(gdp_center),
+    )
+    for position, (
+        cluster_id,
+        log_center,
+        gdp_center,
+    ) in enumerate(ordered_centers)
+]
+
+cluster_mapping = spark.createDataFrame(
+    cluster_mapping_rows,
+    """
+    cluster_id INT,
+    gdp_cluster STRING,
+    cluster_center_log_gdp DOUBLE,
+    cluster_center_gdp DOUBLE
+    """,
+)
+
+display(cluster_mapping.orderBy("cluster_center_gdp"))
+
+# COMMAND ----------
+
+classified_countries = (
+    clustered_countries
+    .join(
+        F.broadcast(cluster_mapping),
+        on="cluster_id",
+        how="inner",
+    )
+)
+
+display(
+    classified_countries
+    .select(
+        "country",
+        "gdp_per_capita",
+        "cluster_id",
+        "gdp_cluster",
+        "cluster_center_gdp",
+    )
+    .orderBy(F.col("gdp_per_capita").cast("double"))
+)
+
+
+
+# COMMAND ----------
+
+display(
+    classified_countries
+    .groupBy(
+        "gdp_cluster",
+        "cluster_center_gdp",
+    )
+    .agg(
+        F.count("*").alias("country_count"),
+        F.min("gdp_per_capita").alias("minimum_gdp"),
+        F.avg("gdp_per_capita").alias("average_gdp"),
+        F.max("gdp_per_capita").alias("maximum_gdp"),
+    )
+    .orderBy("cluster_center_gdp")
+)
+
+# COMMAND ----------
+
+from pyspark.ml.evaluation import ClusteringEvaluator
+
+evaluator = ClusteringEvaluator(
+    featuresCol="features",
+    predictionCol="cluster_id",
+    metricName="silhouette",
+    distanceMeasure="squaredEuclidean",
+)
+
+silhouette_score = evaluator.evaluate(classified_countries)
+
+print(f"Silhouette score: {silhouette_score:.4f}")
+
+# COMMAND ----------
+
+gdp_classifications = (
+    classified_countries
+    .select(
+        "country",
+        F.col("gdp_per_capita").cast("double").alias("gdp_per_capita"),
+        "log_gdp_per_capita",
+        "cluster_id",
+        "gdp_cluster",
+        "cluster_center_log_gdp",
+        "cluster_center_gdp",
+    )
+    .withColumn("model_k", F.lit(3))
+    .withColumn("model_seed", F.lit(42))
+)
+
+# COMMAND ----------
+
+gdp_classifications.write.mode(
+    "overwrite"
+).option(
+    "overwriteSchema",
+    "true",
+).saveAsTable(
+    "covid19_socioeconomic_analysis.gold.owid_gdp_classification"
 )
