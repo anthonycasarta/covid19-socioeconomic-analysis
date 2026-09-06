@@ -13,8 +13,6 @@ select
     covid.new_deaths,
     covid.total_cases,
     covid.total_deaths,
-    covid.stringency_index,
-    covid.reproduction_rate,
     classification.country is not null as is_gdp_classified
 from stream
     silver.covid_core_metrics_daily as covid
