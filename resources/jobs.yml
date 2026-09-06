@@ -40,3 +40,11 @@ resources:
             - task_key: run_pipeline
           notebook_task:
             notebook_path: ../notebooks/05_owid_income_kmeans_clustering.py
+
+        - task_key: create_metric_view
+          depends_on:
+            - task_key: run_gdp_clustering
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../views/covid_gdp_metric_view.sql
