@@ -28,6 +28,9 @@ variables:
   hospital_medicine_source:
     default: /Volumes/covid19_socioeconomic_analysis/bronze/healthcare_raw/who/hospital_medicine/data/
 
+  warehouse_id:
+    description: SQL warehouse used for metric views and dashboards
+
 targets:
   dev:
     default: true
