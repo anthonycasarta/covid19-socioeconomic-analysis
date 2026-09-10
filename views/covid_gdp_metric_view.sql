@@ -31,7 +31,9 @@ measures:
         range: current
         semiadditive: last
   - name: cases_per_million
-    expr: MEASURE(reported_cases) * 1000000.0 / NULLIF(MEASURE(population), 0)
-  - name: deaths_per_million
-    expr: MEASURE(reported_deaths) * 1000000.0 / NULLIF(MEASURE(population), 0)
+    expr: SUM(total_cases_per_million)
+    window:
+      - order: date
+        semiadditive: last
+        range: current
 $$;
