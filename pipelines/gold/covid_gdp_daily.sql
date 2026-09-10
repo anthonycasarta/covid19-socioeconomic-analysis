@@ -14,6 +14,7 @@ select
     covid.total_cases,
     covid.total_deaths,
     covid_normal.total_cases_per_million,
+    covid_normal.total_deaths_per_million,
     classification.country is not null as is_gdp_classified
 from stream
     silver.covid_core_metrics_daily as covid

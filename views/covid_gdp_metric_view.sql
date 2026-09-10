@@ -36,4 +36,10 @@ measures:
       - order: date
         semiadditive: last
         range: current
+  - name: deaths_per_million
+    expr: SUM(total_deaths_per_million)
+    window:
+      - order: date
+        semiadditive: last
+        range: current
 $$;
