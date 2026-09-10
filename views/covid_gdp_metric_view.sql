@@ -19,7 +19,7 @@ fields:
   - name: gdp_cluster
     expr: gdp_cluster
   - name: total_cases_per_million
-    expr:total_cases_per_million
+    expr: total_cases_per_million
 
 measures:
   - name: reported_cases
